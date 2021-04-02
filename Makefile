@@ -92,7 +92,7 @@ build:
 build/$(LIB_PROFILER_SO): $(SOURCES) $(HEADERS) $(JAVA_HEADERS)
 	$(CXX) $(CXXFLAGS) -DPROFILER_VERSION=\"$(PROFILER_VERSION)\" $(INCLUDES) -fPIC -shared -o $@ $(SOURCES) $(LIBS)
 
-build/$(JATTACH): src/jattach/jattach.c
+build/$(JATTACH): src/jattach/jattach.c src/jattach/utils.c
 	$(CC) $(CFLAGS) -DJATTACH_VERSION=\"$(PROFILER_VERSION)-ap\" -o $@ $^
 
 build/$(API_JAR): $(API_SOURCES)
