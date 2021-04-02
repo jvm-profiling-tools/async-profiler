@@ -198,7 +198,7 @@ int main(int argc, char** argv) {
         if (!get_tmp_path(pid)) {
             strcpy(tmp_path, "/tmp");
         }
-        if (!enter_mount_ns(pid)) {
+        if (!enter_ns(pid, "mnt")) {
             printf("WARNING: couldn't enter target process mnt namespace\n");
         }
     }

@@ -70,13 +70,15 @@ int get_tmp_path(int pid) {
     return 1;
 }
 
-int enter_mount_ns(int pid) {
+int enter_ns(int pid, const char *type) {
 #ifdef __NR_setns
     char path[128];
-    snprintf(path, sizeof(path), "/proc/%d/ns/mnt", pid);
+    snprintf(path, sizeof(path), "/proc/%d/ns/%s", pid, type);
+    char selfpath[128];
+    snprintf(selfpath, sizeof(selfpath), "/proc/self/ns/%s", type);
 
     struct stat oldns_stat, newns_stat;
-    if (stat("/proc/self/ns/mnt", &oldns_stat) == 0 && stat(path, &newns_stat) == 0) {
+    if (stat(selfpath, &oldns_stat) == 0 && stat(path, &newns_stat) == 0) {
         // Don't try to call setns() if we're in the same namespace already
         if (oldns_stat.st_ino != newns_stat.st_ino) {
             int newns = open(path, O_RDONLY);
@@ -184,7 +186,7 @@ int get_tmp_path(int pid) {
 }
 
 // This is a Linux-specific API; nothing to do on macOS and FreeBSD
-int enter_mount_ns(int pid) {
+int enter_ns(int pid, const char *type) {
     return 1;
 }
 
@@ -216,7 +218,7 @@ int get_tmp_path(int pid) {
 }
 
 // This is a Linux-specific API; nothing to do on macOS and FreeBSD
-int enter_mount_ns(int pid) {
+int enter_ns(int pid, const char *type) {
     return 1;
 }
 
