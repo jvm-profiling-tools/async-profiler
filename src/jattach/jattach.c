@@ -337,7 +337,9 @@ static int write_command(int fd, int argc, char** argv) {
 static int read_response(int fd, int argc, char** argv) {
     char buf[8192];
     ssize_t bytes = read(fd, buf, sizeof(buf) - 1);
-    if (bytes <= 0) {
+    if (bytes == 0) {
+        fprintf(stderr, "Got EOF instead of a response\n");
+    } else if (bytes < 0) {
         perror("Error reading response");
         return 1;
     }
