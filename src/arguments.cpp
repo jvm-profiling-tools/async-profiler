@@ -238,6 +238,9 @@ Error Arguments::parse(const char* args) {
                     }
                 }
 
+            CASE("fdtransfer")
+                _fdtransfer = true;
+
             // Output style modifiers
             CASE("simple")
                 _style |= STYLE_SIMPLE;
