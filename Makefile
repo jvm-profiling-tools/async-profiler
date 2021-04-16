@@ -121,6 +121,7 @@ test: all
 	test/thread-smoke-test.sh
 	test/alloc-smoke-test.sh
 	test/load-library-test.sh
+	test/fdtransfer-smoke-test.sh
 	echo "All tests passed"
 
 clean:
