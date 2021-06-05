@@ -29,7 +29,7 @@ char tmp_path[TMP_PATH];
 
 #ifdef __linux__
 
-int get_process_info(int pid, uid_t* uid, gid_t* gid, int* nspid) {
+int get_process_info(int pid, uid_t* uid, gid_t* gid, int* nspid, int *tgid) {
     // Parse /proc/pid/status to find process credentials
     char path[64];
     snprintf(path, sizeof(path), "/proc/%d/status", pid);
@@ -51,6 +51,8 @@ int get_process_info(int pid, uid_t* uid, gid_t* gid, int* nspid) {
         } else if (strncmp(line, "NStgid:", 7) == 0) {
             // PID namespaces can be nested; the last one is the innermost one
             *nspid = atoi(strrchr(line, '\t'));
+        } else if (strncmp(line, "Tgid:\t", 6) == 0) {
+            *tgid = atoi(line + 6);
         }
     }
 
@@ -164,7 +166,7 @@ int alt_lookup_nspid(int pid) {
 
 #elif defined(__APPLE__)
 
-int get_process_info(int pid, uid_t* uid, gid_t* gid, int* nspid) {
+int get_process_info(int pid, uid_t* uid, gid_t* gid, int* nspid, int* tgid) {
     int mib[4] = {CTL_KERN, KERN_PROC, KERN_PROC_PID, pid};
     struct kinfo_proc info;
     size_t len = sizeof(info);
@@ -176,6 +178,7 @@ int get_process_info(int pid, uid_t* uid, gid_t* gid, int* nspid) {
     *uid = info.kp_eproc.e_ucred.cr_uid;
     *gid = info.kp_eproc.e_ucred.cr_gid;
     *nspid = pid;
+    *tgid = pid;
     return 1;
 }
 
@@ -197,7 +200,7 @@ int alt_lookup_nspid(int pid) {
 
 #else // __FreeBSD__
 
-int get_process_info(int pid, uid_t* uid, gid_t* gid, int* nspid) {
+int get_process_info(int pid, uid_t* uid, gid_t* gid, int* nspid, int *tgid) {
     int mib[4] = {CTL_KERN, KERN_PROC, KERN_PROC_PID, pid};
     struct kinfo_proc info;
     size_t len = sizeof(info);
@@ -209,6 +212,7 @@ int get_process_info(int pid, uid_t* uid, gid_t* gid, int* nspid) {
     *uid = info.ki_uid;
     *gid = info.ki_groups[0];
     *nspid = pid;
+    *tgid = pid;
     return 1;
 }
 

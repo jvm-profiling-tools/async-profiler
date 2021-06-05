@@ -41,7 +41,8 @@ int main(int argc, const char *argv[]) {
     pid_t nspid = -1;
     uid_t _target_uid;
     gid_t _target_gid;
-    if (!get_process_info(pid, &_target_uid, &_target_gid, &nspid)) {
+    pid_t _tgid;
+    if (!get_process_info(pid, &_target_uid, &_target_gid, &nspid, &_tgid)) {
         fprintf(stderr, "Process %d not found\n", pid);
         return 1;
     }
@@ -59,7 +60,7 @@ int main(int argc, const char *argv[]) {
     if (0 == fork()) {
         // do the actual work
         if (FdTransfer::connectToTarget(nspid)) {
-            _exit(FdTransfer::serveRequests() ? 0 : 1);
+            _exit(FdTransfer::serveRequests(nspid) ? 0 : 1);
         } else {
             _exit(1);
         }

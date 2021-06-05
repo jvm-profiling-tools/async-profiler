@@ -33,7 +33,7 @@
 
 extern char tmp_path[TMP_PATH];
 
-int get_process_info(int pid, uid_t* uid, gid_t* gid, int* nspid);
+int get_process_info(int pid, uid_t* uid, gid_t* gid, int* nspid, int *tgid);
 int get_tmp_path(int pid);
 int enter_ns(int pid, const char *type);
 int alt_lookup_nspid(int pid);

@@ -180,7 +180,8 @@ int main(int argc, char** argv) {
     uid_t target_uid = my_uid;
     gid_t target_gid = my_gid;
     int nspid = -1;
-    if (!get_process_info(pid, &target_uid, &target_gid, &nspid)) {
+    int _tgid;
+    if (!get_process_info(pid, &target_uid, &target_gid, &nspid, &_tgid)) {
         fprintf(stderr, "Process %d not found\n", pid);
         return 1;
     }
