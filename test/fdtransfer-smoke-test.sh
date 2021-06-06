@@ -26,6 +26,8 @@ fi
 
   kill $JAVAPID
 
+  cat $FILENAME
+
   function assert_string() {
     if ! grep -q "$1" $FILENAME; then
       exit 1
