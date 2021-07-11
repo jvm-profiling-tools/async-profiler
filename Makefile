@@ -69,7 +69,7 @@ endif
 
 .PHONY: all release test clean
 
-all: build build/$(LIB_PROFILER) build/$(JATTACH) build/$(API_JAR) build/$(CONVERTER_JAR)
+all: build build/$(LIB_PROFILER) build/$(JATTACH) build/$(API_JAR) build/$(CONVERTER_JAR) build/fdtransfer
 
 release: build $(PACKAGE_NAME).$(PACKAGE_EXT)
 
@@ -100,8 +100,11 @@ build:
 build/$(LIB_PROFILER_SO): $(SOURCES) $(HEADERS) $(JAVA_HEADERS)
 	$(CXX) $(CXXFLAGS) -DPROFILER_VERSION=\"$(PROFILER_VERSION)\" $(INCLUDES) -fPIC -shared -o $@ $(SOURCES) $(LIBS)
 
-build/$(JATTACH): src/jattach/jattach.c
+build/$(JATTACH): src/jattach/jattach.c src/jattach/utils.c
 	$(CC) $(CFLAGS) -DJATTACH_VERSION=\"$(PROFILER_VERSION)-ap\" -o $@ $^
+
+build/fdtransfer: src/fdTransfer.cpp src/log.cpp src/jattach/fdtransfer.cpp src/jattach/utils.c
+	$(CXX) $(CFLAGS) -o $@ $^
 
 build/$(API_JAR): $(API_SOURCES)
 	mkdir -p build/api
@@ -126,6 +129,7 @@ test: all
 	test/thread-smoke-test.sh
 	test/alloc-smoke-test.sh
 	test/load-library-test.sh
+	test/fdtransfer-smoke-test.sh
 	echo "All tests passed"
 
 clean:
